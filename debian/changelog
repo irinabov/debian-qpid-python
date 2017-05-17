@@ -1,0 +1,84 @@
+qpid-python (1.36.0-1qpid+xenial1) xenial; urgency=medium
+
+  * Rebased on qpid-python 1.36.0
+
+ -- Irina Boverman <iboverma@redhat.com>  Tue, 16 May 2017 15:30:42 -0400
+
+qpid-python (1.35-0qpid+xenial1) xenial; urgency=medium
+
+  * Rebased on qpid-python 1.35.0
+
+ -- Matt Broadstone <mbroadst@gmail.com>  Wed, 31 Aug 2016 14:07:43 -0400
+
+qpid-python (0.32-3qpid+xenial1) xenial; urgency=medium
+
+  * Bumped the release to add QPID-7053 patch.
+
+ -- Irina Boverman <iboverma@redhat.com>  Wed, 9 Mar 2016 17:16:25 -0400
+
+qpid-python (0.32-1xenial+mcpierce1) xenial; urgency=low
+
+  * Rebased on qpid-python 0.32.
+
+ -- Darryl L. Pierce <dpierce@redhat.com>  Wed, 27 May 2015 15:59:47 -0400
+
+qpid-python (0.28-1) unstable; urgency=low
+
+  * New maintainer. (Close #729207)
+  * Rebased on qpid-python 0.28.
+
+ -- Darryl L. Pierce <mcpierce@gmail.com>  Wed, 10 Sep 2014 15:20:53 -0400
+
+qpid-python (0.22+dfsg-1) unstable; urgency=low
+
+  * QA upload.
+  * Strip specs/amqp.0-10.dtd from upstream tarball. (Closes: #706101).
+
+ -- Michael Banck <mbanck@debian.org>  Fri, 22 Nov 2013 23:31:53 +0100
+
+qpid-python (0.22-1) unstable; urgency=low
+
+  * QA upload.
+  * New upstream release. (Closes: #714133).
+    + Includes fix for CVE-2013-1909.
+  * Can now import qpid. (Closes: #706292).
+  * License has been resolved upstream so include AMPQ specs.
+  * Fix capitalization in package description.
+  * Bump debhelper build-dep and compat to 9.
+  * Bump Standards Version to 3.9.4.
+
+ -- Barry deFreese <bdefreese@debian.org>  Mon, 01 Jul 2013 10:14:06 -0400
+
+qpid-python (0.16+repack-1) unstable; urgency=high
+
+  * QA upload.
+  * Set Debian QA Group as the maintainer (see bug #706101).
+  * Remove non-free AMQP spec files (closes: #706101).
+    - Remove now unneeded/broken debian/python-qpid.install file.
+    - Don't build now empty qpid-specs package.
+
+ -- Michael Gilbert <mgilbert@debian.org>  Sat, 27 Apr 2013 18:23:12 +0000
+
+qpid-python (0.16-1) unstable; urgency=low
+
+  *  New upstream version.
+
+ -- Cajus Pollmeier <cajus@debian.org>  Fri, 18 May 2012 09:17:16 +0200
+
+qpid-python (0.14-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Cajus Pollmeier <cajus@debian.org>  Mon, 30 Jan 2012 10:55:37 +0100
+
+qpid-python (0.12-2) unstable; urgency=low
+
+  * Fixed build for different python versions. (Closes: #646658)
+
+ -- Cajus Pollmeier <cajus@debian.org>  Wed, 26 Oct 2011 09:04:30 +0200
+
+qpid-python (0.12-1) unstable; urgency=low
+
+  * Initial release. (Closes: #640887)
+
+ -- Cajus Pollmeier <cajus@debian.org>  Wed, 10 Nov 2010 17:45:28 +0100
