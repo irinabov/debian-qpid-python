@@ -6,9 +6,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,10 +16,27 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-import atexit, time, errno, os
+import time, errno, os, atexit, traceback
 from compat import select, SelectError, set, selectable_waiter, format_exc
 from threading import Thread, Lock
 from logging import getLogger
+from qpid.messaging import InternalError
+
+def _stack(skip=0):
+  return ("".join(traceback.format_stack()[:-(1+skip)])).strip()
+
+class SelectorStopped(InternalError):
+  def __init__(self, msg, where=None):
+    InternalError.__init__(self, text=msg)
+    self.where = _stack(1)
+
+def _check(ex, skip=0):
+  if ex:
+    log.error("illegal use of qpid.messaging at:\n%s\n%s" % (_stack(1), ex))
+    where = getattr(ex, 'where')
+    if where:
+      log.error("qpid.messaging was previously stopped at:\n%s\n%s" % (where, ex))
+    raise ex
 
 log = getLogger("qpid.messaging")
 
@@ -53,9 +70,13 @@ class Selector:
     Selector.lock.acquire()
     try:
       if Selector.DEFAULT is None or Selector._current_pid != os.getpid():
+        # If we forked, mark the existing Selector dead.
+        if Selector.DEFAULT is not None:
+          log.warning("process forked, child must not use parent qpid.messaging")
+          Selector.DEFAULT.dead(SelectorStopped("forked child using parent qpid.messaging"))
         sel = Selector()
-        atexit.register(sel.stop)
         sel.start()
+        atexit.register(sel.stop)
         Selector.DEFAULT = sel
         Selector._current_pid = os.getpid()
       return Selector.DEFAULT
@@ -69,10 +90,10 @@ class Selector:
     self.waiter = selectable_waiter()
     self.reading.add(self.waiter)
     self.stopped = False
-    self.thread = None
     self.exception = None
 
   def wakeup(self):
+    _check(self.exception)
     self.waiter.wakeup()
 
   def register(self, selectable):
@@ -101,14 +122,14 @@ class Selector:
     self.wakeup()
 
   def start(self):
-    self.stopped = False
+    _check(self.exception)
     self.thread = Thread(target=self.run)
     self.thread.setDaemon(True)
     self.thread.start();
 
   def run(self):
     try:
-      while not self.stopped:
+      while not self.stopped and not self.exception:
         wakeup = None
         for sel in self.selectables.copy():
           t = self._update(sel)
@@ -152,16 +173,44 @@ class Selector:
           if w is not None and now > w:
             sel.timeout()
     except Exception, e:
-      self.exception = e
-      info = format_exc()
-      log.error("qpid.messaging I/O thread has died: %s" % str(e))
-      for sel in self.selectables.copy():
-        if hasattr(sel, "abort"):
-          sel.abort(e, info)
-      raise
+      log.error("qpid.messaging thread died: %s" % e)
+      self.exception = SelectorStopped(str(e))
+    self.exception = self.exception or self.stopped
+    self.dead(self.exception or SelectorStopped("qpid.messaging thread died: reason unknown"))
 
   def stop(self, timeout=None):
-    self.stopped = True
-    self.wakeup()
-    self.thread.join(timeout)
-    self.thread = None
+    """Stop the selector and wait for it's thread to exit. It cannot be re-started"""
+    if self.thread and not self.stopped:
+      self.stopped = SelectorStopped("qpid.messaging thread has been stopped")
+      self.wakeup()
+      self.thread.join(timeout)
+
+  def dead(self, e):
+    """Mark the Selector as dead if it is stopped for any reason.  Ensure there any future
+    attempt to use the selector or any of its connections will throw an exception.
+    """
+    self.exception = e
+    try:
+      for sel in self.selectables.copy():
+        c = sel.connection
+        for ssn in c.sessions.values():
+          for l in ssn.senders + ssn.receivers:
+            disable(l, self.exception)
+          disable(ssn, self.exception)
+        disable(c, self.exception)
+    except Exception, e:
+      log.error("error stopping qpid.messaging (%s)\n%s", self.exception, format_exc())
+    try:
+      self.waiter.close()
+    except Exception, e:
+      log.error("error stopping qpid.messaging (%s)\n%s", self.exception, format_exc())
+
+# Disable an object so it raises exceptions on any use
+import inspect
+def disable(obj, exception):
+  assert(exception)
+  def log_raise(*args, **kwargs):
+    _check(exception, 1)
+  # Replace all methods with log_raise
+  for m in inspect.getmembers(obj, predicate=inspect.ismethod):
+    setattr(obj, m[0], log_raise)
