@@ -2,15 +2,23 @@ Source: qpid-python
 Section: python
 Priority: extra
 Maintainer: Debian Middleware Maintainers <pkg-middleware-maintainers@lists.alioth.debian.org>
-Uploaders: Darryl L. Pierce <dpierce@redhat.com>
-Build-Depends: debhelper (>= 9), python (>= 2.6.6-3~), python-setuptools, dh-python
+Uploaders: Irina Boverman <iboverma@redhat.com>
+Build-Depends: debhelper (>= 9.0.0~), 
+               dh-python,
+               python-all-dev,
+               python-setuptools,
+               python (>= 2.6.6-3~),
+               python-dev (>= 2.6.6-3~)
 X-Python-Version: >= 2.6
 Standards-Version: 3.9.7
 Homepage: http://qpid.apache.org
 
 Package: python-qpid
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-setuptools, dh-python
+Depends: ${python:Depends},
+         python (>= 2.6),
+         ${misc:Depends}
+Provides: ${python:Provides}
 Description: Python bindings for qpid/mlib
  Qpid/C++ is a C++ implementation of the AMQP protocol described at
  http://amqp.org/
