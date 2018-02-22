@@ -1,0 +1,4 @@
+python-qpid: binary-without-manpage usr/bin/qpid-python-test
+python-qpid: binary-without-manpage usr/bin/qpid-python-test.bat
+python-qpid: executable-not-elf-or-script usr/bin/qpid-python-test.bat
+
