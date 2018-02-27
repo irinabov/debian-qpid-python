@@ -1,4 +1,4 @@
-qpid-python (1.37.0-2qpid+xenial1) xenial; urgency=medium
+qpid-python (1.37.0-3qpid+xenial1) xenial; urgency=medium
 
   * Rebased on qpid-python 1.37.0
 
