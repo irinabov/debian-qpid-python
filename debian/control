@@ -20,8 +20,17 @@ Depends: ${python:Depends},
          ${misc:Depends}
 Provides: ${python:Provides}
 Description: Python bindings for qpid/mlib
- Qpid/C++ is a C++ implementation of the AMQP protocol described at
- http://amqp.org/
+ A connection-oriented messaging API that supports many languages and platforms
+ and implements AMQP protocol described at http://amqp.org/
  .
  This package contains the qpid Python bindings.
 
+Package: python-qpid-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Description: Python examples for qpid/mlib
+ A connection-oriented messaging API that supports many languages and platforms
+ and implements AMQP protocol described at http://amqp.org/
+ .
+ This package contains examples for the qpid Python bindings.
