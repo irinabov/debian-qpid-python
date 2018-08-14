@@ -14,7 +14,6 @@
 
 override_dh_auto_install:
 	dh_auto_install
-	mkdir -p debian/tmp/usr/share/doc/python-qpid/
 	cp -a examples debian/tmp/usr/share/doc/python-qpid/
 
 override_dh_auto_test:
