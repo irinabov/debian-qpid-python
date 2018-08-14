@@ -1,4 +1,4 @@
-qpid-python (1.37.0+2qpid+bionic1) bionic; urgency=medium
+qpid-python (1.37.0+qpid+bionic2) bionic; urgency=medium
 
   * Rebased on qpid-python 1.37.0
 
