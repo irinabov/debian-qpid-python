@@ -1,6 +1,6 @@
-qpid-python (1.37.0-1qpid+bionic1) bionic; urgency=medium
+qpid-python (1.37.0-2qpid+bionic1) bionic; urgency=medium
 
   * Rebased on qpid-python 1.37.0
 
- -- Irina Boverman <iboverma@redhat.com>  Mon, 13 Aug 2018 12:58:53 -0400
+ -- Irina Boverman <iboverma@redhat.com>  Tue, 14 Aug 2018 12:58:53 -0400
 
